@@ -1,12 +1,6 @@
 import os, difflib, itertools, pdfplumber, joblib, threading, concurrent.futures, multiprocessing
 
 
-
-def output(text):
-    lock.acquire()
-    print(text)
-    lock.release()
-
 def get_pdf_content(fpath):
     pdf = pdfplumber.open(fpath)
     result = str()
@@ -94,8 +88,6 @@ if __name__ == '__main__':
     respaths, rescontent = zip(*[x for x in results if x is not None])
     contents = dict(zip(respaths, rescontent))
 
-    #ccount = sum(1 for ignore in itertools.combinations(contents.keys(), 2))
-
     tlock = threading.Lock()
 
     clist = []
@@ -111,14 +103,6 @@ if __name__ == '__main__':
     for chunk in cresults:
         for line in chunk:
             csv.write(line)
-
-    '''for file1, file2 in itertools.combinations(contents.keys(), 2):
-        ratio = difflib.SequenceMatcher(None, contents[file1], contents[file2]).ratio()
-        if ratio > 0.02:
-            csv.write(str(ratio * 100).replace('.', ",") + ";" + file1 + ";" + file2 + "\n")
-        counter +=1
-        if counter % 1000 == 0:
-            print(f"Compared {counter}/{count}")'''
 
     csv.close()
 
